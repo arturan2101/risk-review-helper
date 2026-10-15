@@ -1,0 +1,18 @@
+[project]
+name = "risk-review-helper"
+version = "0.1.0"
+description = "CLI that prepares a decision package for human risk reviewers."
+requires-python = ">=3.12"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+# E/F = pycodestyle + pyflakes (defaults), I = import sorting, UP = modern syntax, B = common bugs
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# Lets plain `pytest` import risk_helper without installing the package.
+pythonpath = ["."]
