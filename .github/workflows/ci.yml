@@ -29,3 +29,6 @@ jobs:
 
       - name: Tests
         run: pytest -v
+
+      - name: CLI smoke test
+        run: python -m risk_helper examples/complete_risk.json --fake-llm

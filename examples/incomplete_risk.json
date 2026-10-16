@@ -1,0 +1,9 @@
+{
+  "id": "R-002",
+  "title": "Outdated firmware on remote-access VPN gateway",
+  "description": "The VPN gateway runs firmware two major versions behind; the vendor has published a critical security advisory for this version.",
+  "category": "security",
+  "likelihood": 4,
+  "impact": 5,
+  "expert_opinions": []
+}

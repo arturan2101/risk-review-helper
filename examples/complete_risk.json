@@ -1,0 +1,14 @@
+{
+  "id": "R-001",
+  "title": "Third-party billing provider outage",
+  "description": "Billing provider had two outages last quarter; invoices delayed up to 48h.",
+  "category": "vendor",
+  "likelihood": 3,
+  "impact": 4,
+  "owner": "Billing Team",
+  "mitigation": "Evaluate secondary provider; add SLA penalties.",
+  "expert_opinions": [
+    {"expert": "A. Meier", "rating": "high", "comment": "Customer-facing impact is significant."},
+    {"expert": "J. Berzins", "rating": "medium", "comment": "Outages were short; SLA covers us."}
+  ]
+}
