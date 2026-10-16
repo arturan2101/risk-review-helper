@@ -76,11 +76,16 @@ def build_prompt(risk: Risk, completeness: CompletenessResult, risk_score: int |
         f"WARNINGS: {' '.join(completeness.warnings) or 'none'}",
         "",
         "TASK",
-        "Reply with JSON only, using exactly these keys:",
-        '{"summary": "2-3 sentences", "draft_recommendation": "one allowed value", '
-        '"rationale": "1-2 sentences"}',
+        # Describing each key separately: with only '"summary": "2-3 sentences"' in a JSON
+        # template, Qwen 0.5B tended to copy the title as the summary.
+        "Reply with one JSON object with exactly these keys:",
+        "- summary: 2-3 full sentences. Say what the risk is, how severe it is "
+        "(use the risk score) and which information is missing. Do not just repeat the title.",
+        "- draft_recommendation: exactly one of the allowed values below.",
+        "- rationale: 1-2 sentences explaining the recommendation, using only the facts above.",
         "Allowed values for draft_recommendation:",
         *recommendations,
+        "Output only the JSON object.",
     ]
     return "\n".join(lines)
 
