@@ -29,7 +29,7 @@ def _inputs(risk_data: dict):
     return risk, check_completeness(risk), compute_risk_score(risk)
 
 
-# --- prompt -----------------------------------------------------------------
+# prompt
 
 
 def test_prompt_contains_risk_facts_and_missing_fields(risk_data):
@@ -60,7 +60,7 @@ def test_prompt_marks_unknown_values(risk_data):
     assert "- none provided" in prompt
 
 
-# --- parsing ----------------------------------------------------------------
+# parsing
 
 
 def test_clean_json_parses():
@@ -120,7 +120,7 @@ def test_invalid_output_rejected(text):
     assert parse_llm_output(text) is None
 
 
-# --- summarize --------------------------------------------------------------
+# summarize
 
 
 def test_valid_output_first_try(risk_data):
@@ -162,7 +162,25 @@ def test_no_llm_is_skipped(risk_data):
     assert "Missing: owner" in draft["summary"]
 
 
-# --- llm module -------------------------------------------------------------
+class _CrashingLLM:
+    def __init__(self) -> None:
+        self.calls = 0
+
+    def generate(self, prompt: str) -> str:
+        self.calls += 1
+        raise RuntimeError("out of memory")
+
+
+def test_crashing_llm_falls_back_without_retry(risk_data):
+    llm = _CrashingLLM()
+    draft, status = summarize(*_inputs(risk_data), llm)
+    assert status == "fallback"
+    assert draft["draft_recommendation"] == "undecided"
+    assert "RuntimeError" in draft["rationale"]
+    assert llm.calls == 1
+
+
+# llm module
 
 
 def test_fake_llm_repeats_last_response():

@@ -141,7 +141,16 @@ def summarize(
 
     prompt = build_prompt(risk, completeness, risk_score)
     for attempt in (prompt, prompt + STRICT_SUFFIX):
-        draft = parse_llm_output(llm.generate(attempt))
+        try:
+            text = llm.generate(attempt)
+        except Exception as exc:
+            # A crashing model (e.g. out of memory) must not kill the run. A stricter
+            # prompt won't fix a crash, so skip the retry and go straight to the fallback.
+            rationale = (
+                f"LLM call failed ({type(exc).__name__}); recommendation left to the reviewer."
+            )
+            return _rule_based_draft(risk, completeness, risk_score, rationale), "fallback"
+        draft = parse_llm_output(text)
         if draft is not None:
             return draft, "ok"
 

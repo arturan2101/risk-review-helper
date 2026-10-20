@@ -28,7 +28,6 @@ class HuggingFaceLLM:
         self,
         model_name: str = DEFAULT_MODEL,
         max_new_tokens: int = 300,
-        temperature: float = 0.2,
     ) -> None:
         # Lazy import: the core package, tests and CI must work without transformers/torch.
         try:
@@ -41,7 +40,6 @@ class HuggingFaceLLM:
         self._tokenizer = AutoTokenizer.from_pretrained(model_name)
         self._model = AutoModelForCausalLM.from_pretrained(model_name)
         self._max_new_tokens = max_new_tokens
-        self._temperature = temperature
 
     def generate(self, prompt: str) -> str:
         messages = [
@@ -55,8 +53,7 @@ class HuggingFaceLLM:
         output = self._model.generate(
             **inputs,
             max_new_tokens=self._max_new_tokens,
-            do_sample=True,  # temperature is ignored unless sampling is on
-            temperature=self._temperature,
+            do_sample=False,  # greedy decoding: the same input always gives the same answer
         )
         # generate() returns prompt + answer; decode only the newly generated tokens.
         answer_tokens = output[0][inputs["input_ids"].shape[1] :]

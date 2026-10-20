@@ -109,6 +109,17 @@ def test_real_llm_without_dependencies_exits_1(capsys, monkeypatch):
     assert "requirements-llm.txt" in err
 
 
+def test_model_download_failure_exits_1(capsys, monkeypatch):
+    def offline(*args, **kwargs):
+        raise OSError("We couldn't connect to 'https://huggingface.co' to load the files")
+
+    monkeypatch.setattr("risk_helper.cli.HuggingFaceLLM", offline)
+    code, _, err = _run(capsys, COMPLETE)
+    assert code == 1
+    assert "couldn't connect" in err
+    assert "--no-llm" in err
+
+
 def test_python_dash_m_entry_point():
     result = subprocess.run(
         [sys.executable, "-m", "risk_helper", str(COMPLETE), "--fake-llm"],

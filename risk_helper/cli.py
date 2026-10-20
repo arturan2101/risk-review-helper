@@ -94,7 +94,8 @@ def main(argv: list[str] | None = None) -> int:
     else:
         try:
             llm = HuggingFaceLLM()
-        except ImportError as exc:
+        # OSError: e.g. no internet on the first run, before the model is cached.
+        except (ImportError, OSError) as exc:
             return _error(f"{exc}\n(or run with --no-llm / --fake-llm)")
 
     output = build_package(risk, llm).model_dump_json(indent=2)
